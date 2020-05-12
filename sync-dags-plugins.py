@@ -1,4 +1,4 @@
-import os
+import subprocess
 
 
 def run_command(cmd):
@@ -10,8 +10,12 @@ def run_command(cmd):
         Exception if execution was not successful
     """
     # execute command
-    result = os.system(cmd)
+    result = subprocess.run(
+        [cmd],
+        capture_output=True,
+        shell=True,
+    )
 
     # check error
-    if result != 0:
-        raise Exception(f"Error in executing {cmd}")
+    if result.returncode != 0:
+        raise Exception(f"Error in execution: {result.stderr.decode()}")
