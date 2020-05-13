@@ -95,3 +95,5 @@ with DAG(
             "path_to_repo": DAGS_GITHUB_REPO,
         }
     )
+
+    dummy_task >> update_dags
