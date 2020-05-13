@@ -1,4 +1,11 @@
+from airflow import DAG
+from airflow.operators.dummy_operator import DummyOperator
+from airflow.operators.python_operator import PythonOperator
+from datetime import datetime
 import subprocess
+
+DAGS_GITHUB_REPO = ""
+DAGS_ABSOLUTE_PATH = ""
 
 
 def run_command(cmd):
@@ -52,3 +59,39 @@ def update_repo(absolute_path, git_user, git_pswd, path_to_repo):
     run_command(f"git clone https://{git_user}:{git_pswd}@github.com/{path_to_repo} {absolute_path}")
 
     print(f"Successfully updated {path_to_repo} at {absolute_path}")
+
+
+default_args = {
+    "owner": "a-jumani",
+    "start_date": datetime(2020, 5, 12),
+    "depends_on_past": False,                   # no past dependence
+    "retries": 0,                               # no retries
+    "concurrency": 1,                           # dag instances not concurrent
+    "catchup": False                            # catchup is off
+}
+
+
+# update dags: clean DAGS_ABSOLUTE_PATH and clone DAGS_GITHUB_REPO into it
+with DAG(
+    "update-dags",
+    default_args=default_args,
+    description="Update dags from github. Run this dag in isolation.",
+    schedule_interval=None,
+) as dag1:
+
+    dummy_task = DummyOperator(
+        task_id="dummy_task",
+        dag=dag1,
+    )
+
+    update_dags = PythonOperator(
+        task_id="update_dags",
+        dag=dag1,
+        python_callable=update_repo,
+        op_kwargs={
+            "absolute_path": DAGS_ABSOLUTE_PATH,
+            "git_user": "{{ dag_run.conf['git_user'] }}",
+            "git_pswd": "{{ dag_run.conf['git_password'] }}",
+            "path_to_repo": DAGS_GITHUB_REPO,
+        }
+    )
