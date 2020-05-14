@@ -6,6 +6,8 @@ import subprocess
 
 DAGS_GITHUB_REPO = ""
 DAGS_ABSOLUTE_PATH = ""
+PLUGINS_GITHUB_REPO = ""
+PLUGINS_ABSOLUTE_PATH = ""
 
 
 def run_command(cmd):
@@ -97,3 +99,32 @@ with DAG(
     )
 
     dummy_task >> update_dags
+
+
+# update plugins: clean PLUGINS_ABSOLUTE_PATH and clone PLUGINS_GITHUB_REPO
+# into it
+with DAG(
+    "update-plugins",
+    default_args=default_args,
+    description="Update plugins from github. Run this dag in isolation.",
+    schedule_interval=None,
+) as dag2:
+
+    dummy_task = DummyOperator(
+        task_id="dummy_task",
+        dag=dag2,
+    )
+
+    update_plugins = PythonOperator(
+        task_id="update_plugins",
+        dag=dag2,
+        python_callable=update_repo,
+        op_kwargs={
+            "absolute_path": PLUGINS_ABSOLUTE_PATH,
+            "git_user": "{{ dag_run.conf['git_user'] }}",
+            "git_pswd": "{{ dag_run.conf['git_password'] }}",
+            "path_to_repo": PLUGINS_GITHUB_REPO,
+        }
+    )
+
+    dummy_task >> update_plugins
