@@ -4,6 +4,7 @@ from airflow.operators.python_operator import PythonOperator
 from datetime import datetime
 from os.path import isdir
 from shutil import rmtree
+import logging
 import subprocess
 
 
@@ -56,7 +57,7 @@ def update_repo(absolute_path, git_user, git_pswd, path_to_repo):
     run_command("git clone --recurse-submodules https://{}:{}@{} {}"
                 .format(git_user, git_pswd, path_to_repo, absolute_path))
 
-    print(f"Successfully updated {path_to_repo} at {absolute_path}")
+    logging.info(f"Successfully updated {path_to_repo} at {absolute_path}")
 
 
 default_args = {
