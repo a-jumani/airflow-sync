@@ -16,5 +16,7 @@ Follows these steps:
 4. Whenever your trigger `update-dags` or `update-plugins` dag, provide your GitHub credentials in the configuration using syntax `{"git_user": "<username>", "git_password": "<password/access_token>"}`.
 Note: using `Variables` instead of this method will also expose the credentials in web UI. The best method, according to my knowledge, is for read-only access credentials to be injected into the instance / container and using a (bash) script.
 
+5. `DAGS_GITHUB_REPO` and `PLUGINS_GITHUB_REPO` are allowed to contain submodules.
+
 ### Tips:
 1. Import operators using syntax `operator.my_operator` (as explained [here](https://www.astronomer.io/guides/airflow-importing-custom-hooks-operators/)) to avoid having to restart _webserver_ and _scheduler_ for updated/new operators to take effect.
