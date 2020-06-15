@@ -2,6 +2,8 @@ from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 from datetime import datetime
+from os.path import isdir
+from shutil import rmtree
 import subprocess
 
 
@@ -46,11 +48,9 @@ def update_repo(absolute_path, git_user, git_pswd, path_to_repo):
     if absolute_path[-1] != '/':
         absolute_path += '/'
 
-    # clean up non-hidden files and all directories at absolute_path
-    run_command(f"rm -rf {absolute_path}*")
-
-    # clean up hidden git files
-    run_command(f"rm -rf {absolute_path}.git*")
+    # clean up absolute_path
+    if isdir(absolute_path):
+        rmtree(absolute_path)
 
     # clone repo_name at absolute_path
     run_command(f"git clone https://{git_user}:{git_pswd}@github.com/{path_to_repo} {absolute_path}")
