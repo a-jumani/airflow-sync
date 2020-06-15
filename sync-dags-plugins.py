@@ -4,11 +4,6 @@ from airflow.operators.python_operator import PythonOperator
 from datetime import datetime
 import subprocess
 
-DAGS_GITHUB_REPO = ""
-DAGS_ABSOLUTE_PATH = ""
-PLUGINS_GITHUB_REPO = ""
-PLUGINS_ABSOLUTE_PATH = ""
-
 
 def run_command(cmd):
     """ Execute a shell command.
@@ -91,10 +86,10 @@ with DAG(
         dag=dag1,
         python_callable=update_repo,
         op_kwargs={
-            "absolute_path": DAGS_ABSOLUTE_PATH,
+            "absolute_path": "{{  var.value.DAGS_ABSOLUTE_PATH }}",
             "git_user": "{{ dag_run.conf['git_user'] }}",
             "git_pswd": "{{ dag_run.conf['git_password'] }}",
-            "path_to_repo": DAGS_GITHUB_REPO,
+            "path_to_repo": "{{ var.value.DAGS_GITHUB_REPO }}",
         }
     )
 
@@ -120,10 +115,10 @@ with DAG(
         dag=dag2,
         python_callable=update_repo,
         op_kwargs={
-            "absolute_path": PLUGINS_ABSOLUTE_PATH,
+            "absolute_path": "{{ var.value.PLUGINS_ABSOLUTE_PATH }}",
             "git_user": "{{ dag_run.conf['git_user'] }}",
             "git_pswd": "{{ dag_run.conf['git_password'] }}",
-            "path_to_repo": PLUGINS_GITHUB_REPO,
+            "path_to_repo": "{{ var.value.PLUGINS_GITHUB_REPO }}",
         }
     )
 
