@@ -53,7 +53,7 @@ def update_repo(absolute_path, git_user, git_pswd, path_to_repo):
         rmtree(absolute_path)
 
     # clone repo_name at absolute_path
-    run_command(f"git clone https://{git_user}:{git_pswd}@github.com/{path_to_repo} {absolute_path}")
+    run_command(f"git clone https://{git_user}:{git_pswd}@{path_to_repo} {absolute_path}")
 
     print(f"Successfully updated {path_to_repo} at {absolute_path}")
 

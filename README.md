@@ -11,7 +11,7 @@ Follows these steps:
     Note: do **NOT** use `$AIRFLOW_HOME/dags` instead as we do not want to reset `sync-dags-plugins.py` as `update-dags` executes.
     - `$AIRFLOW_HOME/plugins` or `$AIRFLOW_HOME/plugins/<some_folder>` for plugins. Create a `Variable` named `PLUGINS_ABSOLUTE_PATH` set to this path before executing `update-plugins`.
 
-3. Create `Variable`'s named `DAGS_GITHUB_REPO` and `PLUGINS_GITHUB_REPO` and store paths to respective repositories in them, e.g. `github.com/example-repo.git`.
+3. Create `Variable`'s named `DAGS_GITHUB_REPO` and `PLUGINS_GITHUB_REPO` and store paths to respective repositories in them, e.g. syntax `https://{git_user}:{git_pswd}@{DAGS_GITHUB_REPO}` is used to clone dags repository into `DAGS_ABSOLUTE_PATH`. See (4) below.
 
 4. Whenever your trigger `update-dags` or `update-plugins` dag, provide your GitHub credentials in the configuration using syntax `{"git_user": "<username>", "git_password": "<password/access_token>"}`.
 Note: using `Variables` instead of this method will also expose the credentials in web UI. The best method, according to my knowledge, is for read-only access credentials to be injected into the instance / container and using a (bash) script.
